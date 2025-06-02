@@ -20,4 +20,4 @@ class Pedido:
     descuento = self.cliente.get_descuento()
     return precio_ini * (1- descuento) 
    
- def entrega (self)
+ def entrega (self):
