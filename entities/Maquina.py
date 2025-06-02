@@ -10,9 +10,3 @@ class Maquina:
         self.cantidad = cantidad
 
 if __name__ == "__main__":
-    print("Hola")
-    print(__name__)
-    
-
-
-
