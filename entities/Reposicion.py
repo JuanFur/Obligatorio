@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from entities.Pieza import Pieza
 class Reposicion:
     def __init__(self, pieza, cantidad_lotes):
         self.pieza = pieza

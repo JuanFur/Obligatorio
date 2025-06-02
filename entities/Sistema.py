@@ -1,4 +1,4 @@
-from Pieza import Pieza
+from entities.Pieza import Pieza
 from Maquina import Maquina
 from Requerimiento import Requerimiento
 
