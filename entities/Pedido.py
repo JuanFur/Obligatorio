@@ -14,4 +14,3 @@ class Pedido:
     precio_ini = self.maquina.precio
    
  def entrega (self):
-
