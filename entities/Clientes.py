@@ -21,6 +21,9 @@ class ClienteParticular (Cliente):
       self.cedula = cedula
       self.telefono = telefono
       self.correo = correo_electronico
+   
+   def descuento (self):
+       return 0.0
   
 
 
@@ -32,7 +35,8 @@ class Empresa(Cliente):
       self.pagina = pag_web
       self.telefono = telefono
       self.correo = correo_electronico
-
+   def descuento(self):
+       return 0.2
 
 def registro_cliente():
    tipo = input("Seleccionar tipo cliente:\n1 Particular\n2 Empresa\n>")
@@ -56,5 +60,3 @@ def registro_cliente():
    print("\nCliente registrado:")
    for clave, valor in vars(cliente).items():
         print(f"{clave}: {valor}")
-   
-registro_cliente()
