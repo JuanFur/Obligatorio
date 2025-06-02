@@ -20,5 +20,4 @@ class Pedido:
     descuento = self.cliente.get_descuento()
     return precio_ini * (1- descuento) 
    
- def entrega (self):
-   if self.maquina.
+ def entrega (self)

@@ -1,4 +1,4 @@
-from Sistema import Sistema
+from entities.Sistema import Sistema
 def mostrar_menu_principal():
     print("\n=== Menú Principal ===")
     print("1. Registrar")
