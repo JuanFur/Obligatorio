@@ -25,5 +25,5 @@ class Pedido:
     return round(precio_ini * (1- descuento)) 
    
  def entrega (self):
-   if self.maquina.esta_disponible():
+   if self.maquina.registrar_maquina():
      
