@@ -12,6 +12,9 @@ class Cliente():
     def __init__(self,tipo):
        self.id = generar_id()
        self.tipo =  tipo
+
+    def get_descuento (self):
+       return 0.0
         
         
 class ClienteParticular (Cliente):
@@ -22,10 +25,6 @@ class ClienteParticular (Cliente):
       self.telefono = telefono
       self.correo = correo_electronico
    
-   def descuento (self):
-       return 0.0
-  
-
 
 class Empresa(Cliente):
    def __init__(self, rut, nombre,pag_web, telefono, correo_electronico):
@@ -35,7 +34,8 @@ class Empresa(Cliente):
       self.pagina = pag_web
       self.telefono = telefono
       self.correo = correo_electronico
-   def descuento(self):
+   
+   def get_descuento(self):
        return 0.2
 
 def registro_cliente():

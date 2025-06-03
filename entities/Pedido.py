@@ -11,13 +11,17 @@ class Pedido:
     self.precio = self.calculo_precio()
 
 
-    if self.maquina.esta_disponible():
-      self.entrega
+    if self.maquina.disponible():
+      self.estado = "entregado"
+      self.fecha_entrega = self.fecha_recibimiento
+      print ("Pedido entregado")
+    else:
+      print("Pedido pendiente")
 
 
  def calculo_precio(self):
     precio_ini = self.maquina.precio * 1,5
     descuento = self.cliente.get_descuento()
-    return precio_ini * (1- descuento) 
+    return round(precio_ini * (1- descuento)) 
    
- def entrega (self):
+ def entrega (self)
