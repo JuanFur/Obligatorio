@@ -12,7 +12,7 @@ class Cliente():
     def __init__(self,tipo, es_empresa):
        self.id = generar_id()
        self.tipo =  tipo
-       self.es_empresa = es_empresa
+      
 
     def get_descuento (self):
        return 0.0
