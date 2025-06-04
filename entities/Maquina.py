@@ -23,7 +23,7 @@ de ensamblado).
 from entities.Requerimiento import Requerimiento
 
 class Maquina:
-    def __init__(self, codigo, descripcion, agregar_requisito, requerimientos, pieza, cantidad):
+    def __init__(self, codigo, descripcion):
         self.codigo = codigo
         self.descripcion = descripcion
         self.requerimientos = []
