@@ -20,16 +20,17 @@ de ensamblado).
 """
 
 
+from entities.Requerimiento import Requerimiento
 
 class Maquina:
-    codigo = 1 
     def __init__(self, codigo, descripcion, agregar_requisito, requerimientos, pieza, cantidad):
         self.codigo = codigo
-        Maquina.codigo +=1
         self.descripcion = descripcion
-        self.requerimientos = requerimientos
-        self.agregar_requisito = agregar_requisito
-        self.pieza = pieza
-        self.cantidad = cantidad
+        self.requerimientos = []
 
-if __name__ == "__main__":
+    def agregar_requerimiento(self, pieza, cantidad):
+        requerimiento = Requerimiento
+        self.requerimientos.append(requerimiento)
+ 
+    def costo_produccion(self):
+        return sum(requerimiento.pieza.costo*requerimiento.cantidad for requerimiento in self.requerimientos)
