@@ -1,6 +1,4 @@
 from datetime import datetime
-from Maquina import Maquina
-from clientes import Cliente
 class Pedido:
 
  def __init__(self, cliente, maquina):
