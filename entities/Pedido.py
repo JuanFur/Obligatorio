@@ -1,8 +1,9 @@
 from datetime import datetime
-
+from Maquina import Maquina
+from clientes import Cliente
 class Pedido:
 
- def __init__(self, cliente, maquina, empresa):
+ def __init__(self, cliente, maquina):
     self.cliente = cliente
     self.maquina = maquina
     self.fecha_recibimiento = datetime.now()
@@ -12,13 +13,12 @@ class Pedido:
 
  def calculo_precio(self):
     precio_ini = self.maquina.costo_produccion * 1,5
-    if self.cliente.empresa():
+    if self.cliente.es_empresa:
       return precio_ini * 0.8
     return precio_ini
    
  def entrega (self):
-   if self.estado == "pendiente":
-
+    
      self.estado = "entregado"   
      self.fecha_entrega = self.fecha_recibimiento
      print(f"{self.maquina} entregada a {self.cliente}")
