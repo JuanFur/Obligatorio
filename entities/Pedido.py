@@ -2,7 +2,7 @@ from datetime import datetime
 
 class Pedido:
 
- def __init__(self, cliente, maquina):
+ def __init__(self, cliente, maquina, empresa):
     self.cliente = cliente
     self.maquina = maquina
     self.fecha_recibimiento = datetime.now()
@@ -10,18 +10,15 @@ class Pedido:
     self.estado = "Pendiente"
     self.precio = self.calculo_precio()
 
-
-    if self.maquina.disponible():
-      self.estado = "entregado"
-      self.fecha_entrega = self.fecha_recibimiento
-      print ("Pedido entregado")
-    else:
-      print("Pedido pendiente")
-
-
  def calculo_precio(self):
-    precio_ini = self.maquina.precio * 1,5
-    descuento = self.cliente.get_descuento()
-    return round(precio_ini * (1- descuento)) 
+    precio_ini = self.maquina.costo_produccion * 1,5
+    if self.cliente.empresa():
+      return precio_ini * 0.8
+    return precio_ini
    
- def entrega (self)
+ def entrega (self):
+   if self.estado == "pendiente":
+
+     self.estado = "entregado"   
+     self.fecha_entrega = self.fecha_recibimiento
+     print(f"{self.maquina} entregada a {self.cliente}")

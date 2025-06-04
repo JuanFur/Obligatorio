@@ -9,9 +9,10 @@ def generar_id():
     
 class Cliente():
     
-    def __init__(self,tipo):
+    def __init__(self,tipo, empresa):
        self.id = generar_id()
        self.tipo =  tipo
+       self.empresa = empresa
 
     def get_descuento (self):
        return 0.0
