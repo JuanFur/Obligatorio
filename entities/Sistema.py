@@ -1,5 +1,6 @@
 from entities.Pieza import Pieza
 from entities.Maquina import Maquina
+from Exeptions.ExceptionPiezaYaExiste import ExceptionPiezaYaExiste
 
 class Sistema:
     def __init__(self):
@@ -8,6 +9,10 @@ class Sistema:
 
     def registrar_pieza(self):
         descripcion = input("Descripción: ")
+        # Validar descripción única
+        for pieza in self.piezas:
+            if pieza.descripcion.lower() == descripcion.lower():
+                raise ExceptionPiezaYaExiste(descripcion)
         costo = float(input("Costo por unidad: "))
         tamanio_lote = int(input("Tamaño del lote: "))
         cantidad = int(input("Cantidad disponible: "))
@@ -16,8 +21,8 @@ class Sistema:
         self.piezas.append(nueva_pieza)
         print(f"Pieza registrada ({nueva_pieza.codigo}).")
 
-    def registrar_maquina(self):
-        descripcion = input("Descripcion: ")
+
+        
 
 
     
