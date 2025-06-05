@@ -30,6 +30,7 @@ class Maquina:
         Maquina.contador_codigo += 1
         self.descripcion = descripcion
         self.requerimientos = []
+        self.stock = 0
 
     def agregar_requerimiento(self, pieza, cantidad):
         requerimiento = Requerimiento(pieza, cantidad)

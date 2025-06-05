@@ -43,4 +43,4 @@ class Empresa(Cliente):
        return 0.2
    
    def __str__(self):
-       return f"{super().__str__()} Empresa: {self.nombre_empresa} RUT: {self.rut}"
+       return f"{super().__str__()} Empresa: {self.nombre} RUT: {self.rut}"

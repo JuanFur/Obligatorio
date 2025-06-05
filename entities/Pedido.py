@@ -15,7 +15,7 @@ class Pedido:
     self.fecha_recibimiento = datetime.now()
     self.fecha_entrega = None 
     self.estado = "Pendiente"
-    self.precio = maquina.costo_produccion *1.5 * (1 - cliente.get_descuento())
+    self.precio = maquina.costo_produccion() * 1.5 * (1 - cliente.get_descuento())
     self.entrega()
 
    
