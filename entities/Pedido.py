@@ -20,11 +20,11 @@ class Pedido:
 
    
  def entrega (self):
-   if (self.maquina):
-     
+   if self.maquina.stock > 0:
+     self.maquina.stock -= 1
      self.estado = "entregado"   
      self.fecha_entrega = self.fecha_recibimiento
      print(f"{self.maquina} entregada a {self.cliente}")
 
    else: 
-      print("Pedido pendiente")
+      print(f"Pedido pendiente, no hay stock")
