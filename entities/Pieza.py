@@ -1,4 +1,3 @@
-
 class Pieza: 
     contador_codigo = 1
     def __init__(self, descripcion, costo, tamanio_lote, cantidad_disponible=0):

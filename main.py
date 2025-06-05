@@ -39,8 +39,7 @@ def main():
                 if opcion_registrar == "1":
                     sistema.registrar_pieza()
                 elif opcion_registrar == "2":
-                    # registrar_maquina()
-                    pass
+                    sistema.registrar_maquina()
                 elif opcion_registrar == "3":
                     sistema.registrar_cliente()
                 elif opcion_registrar == "4":

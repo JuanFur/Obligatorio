@@ -1,39 +1,82 @@
 from entities.Pieza import Pieza
 from entities.Maquina import Maquina
-from Exeptions.ExceptionPiezaYaExiste import ExceptionPieza
+from entities.Clientes import ClienteParticular, Empresa
+
+def ingresar_int(msg, min_value = 0):
+
+    while True:
+        try:
+            a = int(input(msg))
+            if a < min_value:
+                raise Exception # Se podría tirar otra excepcion
+
+        except ValueError as e:
+            print("El valor ingresado debe ser un entero. Ingrese el dato nuevamente")
+
+        except: # Tirar una excepción ...
+            print(f"El valor ingresado debe ser mayor o igual a {min_value}")
+
+        else:
+            break
+
+    return a
+
+
+
+def ingresar_float(msg, min_value = 0):
+
+    while True:
+        try:
+            a = float(input(msg))
+            if a < min_value:
+                raise Exception # Se podría tirar otra excepcion
+
+        except ValueError as e:
+            print("El valor ingresado debe ser un número. Ingrese el dato nuevamente")
+
+        except Exception as e:
+            print(f"El valor ingresado debe ser mayor o igual a {min_value}")
+
+        else:
+            break
+
+    return a
+
+        
+
+    
 
 class Sistema:
     def __init__(self):
         self.piezas = []
         self.maquinas = []
+        self.clientes = []
 
     def registrar_pieza(self):
         descripcion = input("Descripción: ")
         # Validar descripción única
-        for pieza in self.piezas:
-            if pieza.descripcion() == descripcion():
-                raise ExceptionPieza(descripcion)
-        costo = float(input("Costo por unidad: "))
-        tamanio_lote = int(input("Tamaño del lote: "))
-        cantidad = int(input("Cantidad disponible: "))
+
+        costo = ingresar_float("Costo por unidad: ")
+        tamanio_lote = int(input("Tamaño del lote: ")) 
+        cantidad = int(input("Cantidad disponible: ")) 
 
         nueva_pieza = Pieza(descripcion, costo, tamanio_lote, cantidad)
         self.piezas.append(nueva_pieza)
         print(f"Pieza registrada ({nueva_pieza.codigo}).")
 
 
-def registrar_maquina(self):
-    descripcion = input("Descripción de la máquina: ")
-    # Validar descripción única
-    for maquina in self.maquinas:
+    def registrar_maquina(self):
+     descripcion = input("Descripción de la máquina: ")
+     # Validar descripción única
+     for maquina in self.maquinas:
         if maquina.descripcion == descripcion:
             print(f"Error: Ya existe una máquina con la descripción {descripcion}.")
             return
 
-    nueva_maquina = Maquina(descripcion)
-    piezas_agregadas = []
+     nueva_maquina = Maquina(descripcion)
+     piezas_agregadas = []
 
-    while True:
+     while True:
         # Mostrar piezas disponibles para agregar (ocultar ya seleccionadas)
         piezas_disponibles = []
         for pieza in self.piezas:
@@ -80,12 +123,35 @@ def registrar_maquina(self):
                         piezas_agregadas.add(pieza_seleccionada.codigo)
                         print(f"Pieza '{pieza_seleccionada.descripcion}' agregada.")
 
-    if not nueva_maquina.requerimientos:
+     if not nueva_maquina.requerimientos:
         print("No se agregó ninguna pieza. La máquina no será registrada.")
         return
 
-    self.maquinas.append(nueva_maquina)
-    print(f"Máquina registrada ({nueva_maquina.codigo}).")
+     self.maquinas.append(nueva_maquina)
+     print(f"Máquina registrada ({nueva_maquina.codigo}).")
+
+    def registrar_cliente():
+     tipo = input("Seleccionar tipo cliente:\n1 Particular\n2 Empresa\n>")
+     if tipo == "1":
+        cedula = input("Ingrese cédula: ")
+        nombre = input("Ingrese nombre completo: ")
+        telefono = input("Ingrese teléfono: ")
+        correo = input("Ingrese correo electrónico: ")
+        cliente = ClienteParticular(cedula, nombre, telefono, correo)
+     elif tipo == "2":
+        rut = input("Ingrese RUT: ")
+        nombre = input("Ingrese nombre de la empresa: ")
+        pagina = input("Ingrese página web: ")
+        telefono = input("Ingrese teléfono de contacto: ")
+        correo = input("Ingrese correo electrónico de contacto: ")
+        cliente = Empresa(rut, nombre, pagina, telefono, correo)
+     else:
+       print ("Tipo cliente no disponible")
+       return None
+   
+     print("\nCliente registrado:")
+     for clave, valor in vars(cliente).items():
+        print(f"{clave}: {valor}")
         
 
 
