@@ -133,7 +133,7 @@ class Sistema:
         print(f"Máquina registrada ({nueva_maquina.codigo}).")
 
         
-    def registrar_cliente():
+    def registrar_cliente(self):
         tipo = input("Seleccionar tipo cliente:\n1 Particular\n2 Empresa\n>")
         if tipo == "1":
             cedula = input("Ingrese cédula: ")
@@ -151,10 +151,11 @@ class Sistema:
         else:
             print ("Tipo cliente no disponible")
             return None
-   
+        
+        self.clientes.append(cliente)
         print("\nCliente registrado:")
-        for clave, valor in vars(cliente).items():
-            print(f"{clave}: {valor}")
+        print(cliente)
+        return cliente
         
 
 

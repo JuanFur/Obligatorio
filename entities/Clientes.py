@@ -24,7 +24,7 @@ class Cliente():
         
         
 class ClienteParticular (Cliente):
-   def __init__(self,nombre, cedula, telefono, correo_electronico):
+   def __init__(self, nombre, cedula, telefono, correo_electronico):
       super().__init__("Particular", telefono, correo_electronico)
       self.nombre_completo = nombre
       self.cedula = cedula
