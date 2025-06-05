@@ -25,6 +25,7 @@ def mostrar_menu_listar():
     print("6. Salir")
     
 sistema = Sistema() 
+
 def main():
     while True:
         mostrar_menu_principal()
@@ -41,8 +42,7 @@ def main():
                     # registrar_maquina()
                     pass
                 elif opcion_registrar == "3":
-                    # registrar_cliente()
-                    pass
+                    sistema.registrar_cliente()
                 elif opcion_registrar == "4":
                     # registrar_pedido()
                     pass

@@ -1,6 +1,6 @@
 from entities.Pieza import Pieza
 from entities.Maquina import Maquina
-from Exeptions.ExceptionPiezaYaExiste import ExceptionPiezaYaExiste
+from Exeptions.ExceptionPiezaYaExiste import ExceptionPieza
 
 class Sistema:
     def __init__(self):
@@ -12,7 +12,7 @@ class Sistema:
         # Validar descripción única
         for pieza in self.piezas:
             if pieza.descripcion() == descripcion():
-                raise ExceptionPiezaYaExiste(descripcion)
+                raise ExceptionPieza(descripcion)
         costo = float(input("Costo por unidad: "))
         tamanio_lote = int(input("Tamaño del lote: "))
         cantidad = int(input("Cantidad disponible: "))

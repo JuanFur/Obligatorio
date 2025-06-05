@@ -1,3 +1,4 @@
+
 contador_id = 1
 
 def generar_id():
