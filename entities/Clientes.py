@@ -1,5 +1,18 @@
+from Exeptions.ExceptionClienteYaExiste import ExceptionClienteYaExiste
+
 contador_id = 1
 cedulas_registradas=[]
+
+def nombre_valido(nombre):
+    if not nombre.replace(" ","").isalpha():
+        raise ExceptionClienteYaExiste("El nombre debe contener solo letras")
+    return nombre
+def cedula_valida(cedula):
+    if len(cedula) != 8 or not cedula.isdigit():
+        raise ValueError("Debe tener 8 digitos numericos")
+    return cedula
+    
+    
 def generar_id():
     global contador_id
     id_actual = contador_id
