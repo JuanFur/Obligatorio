@@ -4,6 +4,7 @@ from entities.Clientes import ClienteParticular, Empresa
 from Exeptions.ExceptionPiezaYaExiste import ExceptionPiezaYaExiste
 from Exeptions.ExceptionMaquinaYaExiste import ExceptionMaquinaYaExiste
 from entities.Pedido import Pedido
+from Exeptions.ExceptionValorInvalido import ExceptionValorInvalido
 
 def ingresar_int(msg, min_value = 0):
 
@@ -57,15 +58,53 @@ class Sistema:
         self.pedido = []
 
     def registrar_pieza(self):
-        descripcion = input("Descripción: ")
-        # Validar descripción única
-        for pieza in self.piezas:
-            if pieza.descripcion == descripcion:
+        while True: #Esto esta raro
+            descripcion = input("Descripción: ").strip()
+            if not descripcion:
+                print("La descripción no puede estar vacía. Intente nuevamente.")
+                continue
+            # Validar descripción única
+            if any(pieza.descripcion == descripcion for pieza in self.piezas):
                 raise ExceptionPiezaYaExiste(descripcion)
+            break
 
-        costo = ingresar_float("Costo por unidad: ")
-        tamanio_lote = int(input("Tamaño del lote: ")) 
-        cantidad = int(input("Cantidad disponible: ")) 
+        while True: 
+            try:
+                costo = float(input("Costo por unidad: "))
+                if costo <= 0:
+                    raise ExceptionValorInvalido("Costo por unidad")
+            except ValueError:
+                print("Debe ingresar un número válido para el costo.")
+            except ExceptionValorInvalido as e:
+                print(e)
+            else:
+                break
+        
+        while True:
+            try:
+                tamanio_lote_input = input("Tamaño del lote: ")
+                tamanio_lote = int(tamanio_lote_input)
+                if tamanio_lote <= 0:
+                    raise ExceptionValorInvalido("Tamaño del lote")
+            except ValueError:
+                print("Debe ingresar un número entero para el tamaño del lote.")
+            except ExceptionValorInvalido as e:
+                print(e)
+            else:
+                break
+
+        while True:
+            try:
+                cantidad_input = input("Cantidad disponible: ")
+                cantidad = int(cantidad_input)
+                if cantidad < 0:
+                    raise ExceptionValorInvalido("Cantidad disponible")
+            except ValueError:
+                print("Debe ingresar un número entero para la cantidad disponible.")
+            except ExceptionValorInvalido as e:
+                print(e)
+            else:
+                break
 
         nueva_pieza = Pieza(descripcion, costo, tamanio_lote, cantidad)
         self.piezas.append(nueva_pieza)
@@ -74,6 +113,9 @@ class Sistema:
 
     def registrar_maquina(self):
         descripcion = input("Descripción de la máquina: ")
+        while descripcion.strip() == "":
+            descripcion = input("La descripcion debe contener caracteres. Intentalo de nuevo: ")
+            
         # Validar descripción única
         for maquina in self.maquinas:
             if maquina.descripcion == descripcion:
