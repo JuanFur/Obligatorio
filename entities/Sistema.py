@@ -60,7 +60,7 @@ class Sistema:
         descripcion = input("Descripción: ")
         # Validar descripción única
         for pieza in self.piezas:
-            if pieza.descripcion.lower() == descripcion.lower():
+            if pieza.descripcion == descripcion:
                 raise ExceptionPiezaYaExiste(descripcion)
 
         costo = ingresar_float("Costo por unidad: ")
@@ -76,7 +76,7 @@ class Sistema:
         descripcion = input("Descripción de la máquina: ")
         # Validar descripción única
         for maquina in self.maquinas:
-            if maquina.descripcion.lower() == descripcion.lower():
+            if maquina.descripcion == descripcion:
                 raise ExceptionMaquinaYaExiste(descripcion)
 
         nueva_maquina = Maquina(descripcion)
