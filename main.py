@@ -72,11 +72,9 @@ def main():
                     # listar_pedidos()
                     pass
                 elif opcion_listar == "3":
-                    # listar_maquinas()
-                    pass
+                    sistema.listar_maquinas()
                 elif opcion_listar == "4":
-                    # listar_piezas()
-                    pass
+                    sistema.listar_piezas()
                 elif opcion_listar == "5":
                     # mostrar_contabilidad()
                     pass

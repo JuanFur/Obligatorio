@@ -200,11 +200,22 @@ class Sistema:
         print(f"Estado: {nuevo_pedido.estado}")
         print(f"Precio: USD {nuevo_pedido.precio}")
         print(f"Fecha de recepción: {nuevo_pedido.fecha_recibimiento.strftime('%Y-%m-%d %H:%M:%S')}")
-
-
-
-
         
+    def listar_piezas(self):
+        if not self.piezas:
+            print("No hay piezas registradas.")
+            return None
+        print("\nListado de piezas:")
+        print(f"{'Código':<6} {'Descripción':<20} {'Stock':<8} {'Tamaño lote':<12} {'Costo':<8}")
+        for pieza in self.piezas:
+            print(f"{pieza.codigo:<6} {pieza.descripcion:<20} {pieza.cantidad_disponible:<8} {pieza.tamanio_lote:<12} {pieza.costo:<8.2f}")
 
-
-    
+    def listar_maquinas(self):
+        if not self.maquinas:
+            print("No hay máquinas registradas.")
+            return None
+        print("\nListado de máquinas:")
+        print(f"{'Código':<6} {'Descripción':<20} {'Costo prod.':<12} {'Disponible':<10}")
+        for maquina in self.maquinas:
+            disponible = "Sí" if maquina.stock > 0 else "No"
+            print(f"{maquina.codigo:<6} {maquina.descripcion:<20} {maquina.costo_produccion():<12.2f} {disponible:<10}")   
