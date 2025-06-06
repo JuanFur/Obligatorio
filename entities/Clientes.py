@@ -1,12 +1,11 @@
 contador_id = 1
-
+cedulas_registradas=[]
 def generar_id():
     global contador_id
     id_actual = contador_id
     contador_id += 1
     return id_actual
 
-    
 class Cliente():
     
     def __init__(self,tipo, telefono, correo_electronico):
@@ -28,6 +27,7 @@ class ClienteParticular (Cliente):
       super().__init__("Particular", telefono, correo_electronico)
       self.nombre_completo = nombre
       self.cedula = cedula
+      cedulas_registradas.append(cedula)
    
    def __str__(self):
        return f"{super().__str__()}- Nombre: {self.nombre_completo}- Cédula: {self.cedula}"
