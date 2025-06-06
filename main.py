@@ -43,8 +43,7 @@ def main():
                 elif opcion_registrar == "3":
                     sistema.registrar_cliente()
                 elif opcion_registrar == "4":
-                    # registrar_pedido()
-                    pass
+                    sistema.registrar_pedido()
                 elif opcion_registrar == "5":
                     # registrar_reposicion()
                     pass

@@ -3,6 +3,7 @@ from entities.Maquina import Maquina
 from entities.Clientes import ClienteParticular, Empresa
 from Exeptions.ExceptionPiezaYaExiste import ExceptionPiezaYaExiste
 from Exeptions.ExceptionMaquinaYaExiste import ExceptionMaquinaYaExiste
+from entities.Pedido import Pedido
 
 def ingresar_int(msg, min_value = 0):
 
@@ -53,6 +54,7 @@ class Sistema:
         self.piezas = []
         self.maquinas = []
         self.clientes = []
+        self.pedido = []
 
     def registrar_pieza(self):
         descripcion = input("Descripción: ")
@@ -156,6 +158,52 @@ class Sistema:
         print("\nCliente registrado:")
         print(cliente)
         return cliente
+    
+    def registrar_pedido(self):
+        if not self.clientes:
+            print("No hay clientes registrados. Registre un cliente")
+            return
+        if not self.maquinas:
+            print("No hay maquinas registradas. Registre una máquina primero.")
+            return
+        print("\nClientes disponibles: ")
+        for i, cliente in enumerate(self.clientes, 1):
+            print(f"{i} - {cliente}")
+
+        while True:
+                opcion_cliente = int(input("\nSeleccione el número del cliente: ")) - 1
+                if 0 <= opcion_cliente < len(self.clientes):
+                    cliente = self.clientes[opcion_cliente]
+                    break
+                else:
+                    print("Número de cliente inválido. Intente nuevamente")
+        
+        print("\nMaquinas disponibles: ")
+        for i, maquina in enumerate(self.maquinas, 1):
+            print(f"{i} - {maquina} - {disponibilidad}")    
+        
+        while True:
+                opcion_maquina = int(input("\nSeleccione el número de la maquina: ")) - 1
+                if 0 <= opcion_maquina < len(self.maquinas):
+                    maquina = self.maquinas[opcion_maquina]
+                    break
+                else:
+                    print("Número de máquina inválido. Intente nuevamente")
+
+        nuevo_pedido = Pedido(cliente, maquina)
+        self.pedidos.append(nuevo_pedido)
+
+        print("\nPedido registrado de forma correcta")
+        print(f"ID: {nuevo_pedido.id}")
+        print(f"Cliente: {cliente}")
+        print(f"Maquina: {maquina.descripcion}")
+        print(f"Estado: {nuevo_pedido.estado}")
+        print(f"Precio: USD {nuevo_pedido.precio}")
+        print(f"Fecha de recepción: {nuevo_pedido.fecha_recibimiento.strftime('%Y-%m-%d %H:%M:%S')}")
+
+
+
+
         
 
 
