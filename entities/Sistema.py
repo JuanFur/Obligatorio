@@ -5,6 +5,8 @@ from Exeptions.ExceptionPiezaYaExiste import ExceptionPiezaYaExiste
 from Exeptions.ExceptionMaquinaYaExiste import ExceptionMaquinaYaExiste
 from entities.Pedido import Pedido
 from Exeptions.ExceptionValorInvalido import ExceptionValorInvalido
+from datetime import datetime
+from entities.Reposicion import Reposicion
 
 def ingresar_int(msg, min_value = 0):
 
@@ -56,6 +58,7 @@ class Sistema:
         self.maquinas = []
         self.clientes = []
         self.pedidos = []
+        self.reposiciones = []        
 
     def registrar_pieza(self):
         descripcion = input("Descripción: ").strip()
@@ -253,6 +256,66 @@ class Sistema:
         print(f"Estado: {nuevo_pedido.estado}")
         print(f"Precio: USD {nuevo_pedido.precio}")
         print(f"Fecha de recepción: {nuevo_pedido.fecha_recibimiento.strftime('%Y-%m-%d %H:%M:%S')}")
+
+    def registrar_reposicion(self):
+        if not self.piezas:
+            print("No hay piezas registradas para reponer.")
+            return
+
+        print("\nPiezas disponibles para reponer:")
+        for pieza in self.piezas:
+            print(f"{pieza.codigo}: {pieza.descripcion} (Stock: {pieza.cantidad_disponible}, Tamaño lote: {pieza.tamanio_lote})")
+
+        while True:
+            codigo_input = input("Ingrese el código de la pieza a reponer (o 'Cancelar' para volver): ").strip()
+            if codigo_input == "Cancelar":
+                print("Registro de reposición cancelado.")
+                return
+            try:
+                codigo = int(codigo_input)
+            except ValueError:
+                print("Debe ingresar un número de código válido.")
+                continue
+
+            pieza_seleccionada = None
+            for pieza in self.piezas:
+                if pieza.codigo == codigo:
+                    pieza_seleccionada = pieza
+                    break
+
+            if pieza_seleccionada is None:
+                print("Código de pieza no encontrado.")
+                continue
+            break
+
+        while True:
+            lotes_input = input(f"Ingrese la cantidad de lotes a comprar para '{pieza_seleccionada.descripcion}' (o 'Cancelar' para volver): ").strip()
+            if lotes_input == "Cancelar":
+                print("Registro de reposición cancelado.")
+                return
+            try:
+                cantidad_lotes = int(lotes_input)
+                if cantidad_lotes <= 0:
+                    print("La cantidad de lotes debe ser mayor a 0.")
+                    continue
+            except ValueError:
+                print("Debe ingresar un número entero válido para la cantidad de lotes.")
+                continue
+            break
+
+        reposicion = Reposicion(pieza_seleccionada, cantidad_lotes)
+        self.reposiciones.append(reposicion)
+
+
+
+        print(f"\nReposición registrada correctamente.")
+        print(f"Pieza: {pieza_seleccionada.descripcion}")
+        print(f"Cantidad total repuesta: {reposicion.cantidad_total}")
+        print(f"Nuevo stock: {pieza_seleccionada.cantidad_disponible}")
+        print(f"Costo total de la reposición: USD {reposicion.costo_total:.2f}")
+        print(f"Fecha de reposición: {reposicion.fecha.strftime('%Y-%m-%d %H:%M:%S')}")
+
+
         
     def listar_piezas(self):
         if not self.piezas:

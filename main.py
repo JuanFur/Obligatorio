@@ -53,7 +53,7 @@ def main():
                 elif opcion_registrar == "4":
                     sistema.registrar_pedido()
                 elif opcion_registrar == "5":
-                    # registrar_reposicion()
+                    sistema.registrar_reposicion()
                     pass
                 elif opcion_registrar == "6":
                     break
