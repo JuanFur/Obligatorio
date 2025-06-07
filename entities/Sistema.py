@@ -222,7 +222,7 @@ class Sistema:
         
         print("\nMaquinas disponibles: ")
         for i, maquina in enumerate(self.maquinas, 1):
-            print(f"{i} - {maquina} - {disponibilidad}")    
+            print(f"{i} - {maquina}")    
         
         while True:
                 opcion_maquina = int(input("\nSeleccione el número de la maquina: ")) - 1
