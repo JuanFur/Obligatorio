@@ -110,8 +110,14 @@ class Sistema:
 
     def registrar_maquina(self):
         descripcion = input("Descripción de la máquina: ")
+        if descripcion.strip().lower() == "cancelar":
+            print("Registro de máquina cancelado.")
+            return
         while descripcion.strip() == "":
             descripcion = input("La descripcion debe contener caracteres. Intentalo de nuevo: ")
+            if descripcion.strip().lower() == "cancelar":
+                print("Registro de máquina cancelado.")
+                return
             
         for i in self.maquinas:
             if i.descripcion == descripcion:
@@ -134,8 +140,11 @@ class Sistema:
             for pieza in piezas_disponibles:
                 print(f"{pieza.codigo}: {pieza.descripcion} (Stock: {pieza.cantidad_disponible})")
 
-            codigo_pieza = input("Ingrese el código de la pieza a agregar (o ENTER para terminar): ")
-            if not codigo_pieza.strip():
+            codigo_pieza = input("Ingrese el código de la pieza a agregar (o 'No' para terminar, 'cancelar' para volver): ").strip()
+            if codigo_pieza.lower() == "cancelar":
+                print("Registro de máquina cancelado.")
+                return
+            if codigo_pieza.lower() == "no":
                 break
 
             try:
@@ -156,7 +165,10 @@ class Sistema:
 
             # Validar cantidad necesaria
             while True:
-                cantidad_input = input(f"Cantidad necesaria de '{pieza_seleccionada.descripcion}': ")
+                cantidad_input = input(f"Cantidad necesaria de '{pieza_seleccionada.descripcion}' (o 'cancelar' para volver): ")
+                if cantidad_input.strip().lower() == "cancelar":
+                    print("Registro de máquina cancelado.")
+                    return
                 try:
                     cantidad = int(cantidad_input)
                     if cantidad <= 0:
@@ -176,8 +188,7 @@ class Sistema:
             return
 
         self.maquinas.append(nueva_maquina)
-        print(f"Máquina registrada ({nueva_maquina.codigo}).")
-        
+        print(f"Máquina registrada ({nueva_maquina.codigo}).")        
     def registrar_cliente(self):
         tipo = input("Seleccionar tipo cliente:\n1 Particular\n2 Empresa\n>")
         if tipo == "1":
