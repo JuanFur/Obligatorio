@@ -1,4 +1,3 @@
-from datetime import datetime
 from entities.Pieza import Pieza
 from entities.Maquina import Maquina
 from entities.Clientes import ClienteParticular, Empresa
@@ -253,7 +252,7 @@ class Sistema:
         print(f"Maquina: {maquina.descripcion}")
         print(f"Estado: {nuevo_pedido.estado}")
         print(f"Precio: USD {nuevo_pedido.precio}")
-        print(f"Fecha de recepción: {nuevo_pedido.fecha_recibimiento.datetime.now()}")
+        print(f"Fecha de recepción: {nuevo_pedido.fecha_recibimiento.strftime('%Y-%m-%d %H:%M:%S')}")
         
     def listar_piezas(self):
         if not self.piezas:
