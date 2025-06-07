@@ -278,3 +278,11 @@ class Sistema:
             if pieza.descripcion == descripcion:
                 return True
         return False
+    
+    def listar_clientes(self):
+        if not self.clientes:
+            print("\nNo hay clientes registrados.")
+            return
+        print("\nLista de clientes") 
+        print(f"{'ID':<5} {'Nombre':<30} {'Tipo':<15} {'Contacto':<20}")       
+    
