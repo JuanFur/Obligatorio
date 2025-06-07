@@ -55,19 +55,17 @@ class Sistema:
         self.piezas = []
         self.maquinas = []
         self.clientes = []
-        self.pedido = []
+        self.pedidos = []
 
     def registrar_pieza(self):
-        while True: #Esto esta raro
-            descripcion = input("Descripción: ").strip()
+        descripcion = input("Descripción: ").strip()
+        while not descripcion or self.descripcion_ya_existe(descripcion):
             if not descripcion:
                 print("La descripción no puede estar vacía. Intente nuevamente.")
-                continue
-            # Validar descripción única
-            if any(pieza.descripcion == descripcion for pieza in self.piezas):
-                raise ExceptionPiezaYaExiste(descripcion)
-            break
-
+            elif self.descripcion_ya_existe(descripcion):
+                print(f"Ya existe una pieza con la descripción: {descripcion}")
+            descripcion = input("Descripción: ").strip()
+            
         while True: 
             try:
                 costo = float(input("Costo por unidad: "))
@@ -82,8 +80,7 @@ class Sistema:
         
         while True:
             try:
-                tamanio_lote_input = input("Tamaño del lote: ")
-                tamanio_lote = int(tamanio_lote_input)
+                tamanio_lote = int(input("Tamaño del lote: "))
                 if tamanio_lote <= 0:
                     raise ExceptionValorInvalido("Tamaño del lote")
             except ValueError:
@@ -95,8 +92,7 @@ class Sistema:
 
         while True:
             try:
-                cantidad_input = input("Cantidad disponible: ")
-                cantidad = int(cantidad_input)
+                cantidad = int(input("Cantidad disponible: "))
                 if cantidad < 0:
                     raise ExceptionValorInvalido("Cantidad disponible")
             except ValueError:
@@ -116,9 +112,8 @@ class Sistema:
         while descripcion.strip() == "":
             descripcion = input("La descripcion debe contener caracteres. Intentalo de nuevo: ")
             
-        # Validar descripción única
-        for maquina in self.maquinas:
-            if maquina.descripcion == descripcion:
+        for i in self.maquinas:
+            if i.descripcion == descripcion:
                 raise ExceptionMaquinaYaExiste(descripcion)
 
         nueva_maquina = Maquina(descripcion)
@@ -146,28 +141,34 @@ class Sistema:
                 codigo_pieza = int(codigo_pieza)
             except ValueError:
                 print("Código inválido.")
-            else:
-                pieza_seleccionada = None
-                for p in piezas_disponibles:
-                    if p.codigo == codigo_pieza:
-                        pieza_seleccionada = p
-                        break
+                continue
 
-                if pieza_seleccionada is None:
-                    print("Pieza no encontrada o ya agregada.")
-                else:
-                    cantidad_input = input(f"Cantidad necesaria de '{pieza_seleccionada.descripcion}': ")
-                    try:
-                        cantidad = int(cantidad_input)
-                    except ValueError:
-                        print("Cantidad inválida.")
-                    else:
-                        if cantidad <= 0:
-                            print("La cantidad debe ser mayor a 0.")
-                        else:
-                            nueva_maquina.agregar_requerimiento(pieza_seleccionada, cantidad)
-                            piezas_agregadas.append(pieza_seleccionada.codigo)
-                            print(f"Pieza '{pieza_seleccionada.descripcion}' agregada.")
+            pieza_seleccionada = None
+            for p in piezas_disponibles:
+                if p.codigo == codigo_pieza:
+                    pieza_seleccionada = p
+                    break
+
+            if pieza_seleccionada is None:
+                print("Pieza no encontrada o ya agregada.")
+                continue
+
+            # Validar cantidad necesaria
+            while True:
+                cantidad_input = input(f"Cantidad necesaria de '{pieza_seleccionada.descripcion}': ")
+                try:
+                    cantidad = int(cantidad_input)
+                    if cantidad <= 0:
+                        print("La cantidad debe ser mayor a 0.")
+                        continue
+                except ValueError:
+                    print("Debe ingresar un número entero válido para la cantidad necesaria.")
+                    continue
+                break
+
+            nueva_maquina.agregar_requerimiento(pieza_seleccionada, cantidad)
+            piezas_agregadas.append(pieza_seleccionada.codigo)
+            print(f"Pieza '{pieza_seleccionada.descripcion}' agregada.")
 
         if not nueva_maquina.requerimientos:
             print("No se agregó ninguna pieza. La máquina no será registrada.")
@@ -175,7 +176,6 @@ class Sistema:
 
         self.maquinas.append(nueva_maquina)
         print(f"Máquina registrada ({nueva_maquina.codigo}).")
-
         
     def registrar_cliente(self):
         tipo = input("Seleccionar tipo cliente:\n1 Particular\n2 Empresa\n>")
@@ -222,7 +222,7 @@ class Sistema:
         
         print("\nMaquinas disponibles: ")
         for i, maquina in enumerate(self.maquinas, 1):
-            print(f"{i} - {maquina} - {disponibilidad}")    
+            print(f"{i} - {maquina}")    
         
         while True:
                 opcion_maquina = int(input("\nSeleccione el número de la maquina: ")) - 1
@@ -261,3 +261,9 @@ class Sistema:
         for maquina in self.maquinas:
             disponible = "Sí" if maquina.stock > 0 else "No"
             print(f"{maquina.codigo:<6} {maquina.descripcion:<20} {maquina.costo_produccion():<12.2f} {disponible:<10}")   
+
+    def descripcion_ya_existe(self, descripcion):
+        for pieza in self.piezas:
+            if pieza.descripcion == descripcion:
+                return True
+        return False
