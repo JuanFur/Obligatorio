@@ -222,6 +222,7 @@ class Sistema:
         print(f"Máquina registrada ({nueva_maquina.codigo}).")        
 
     def registrar_cliente(self):
+        # Selección de tipo de cliente
         tipo_valido = False
         while not tipo_valido:
             tipo = input("Seleccionar tipo cliente:\n1 Particular\n2 Empresa\n>").strip()
@@ -230,8 +231,10 @@ class Sistema:
             else:
                 print("Tipo cliente no disponible. Ingrese 1 o 2.")
 
+        cliente = None
 
         if tipo == "1":
+            # Cliente Particular
             nombre_ok = False
             while not nombre_ok:
                 nombre = input("Ingrese nombre completo: ").strip()
@@ -322,10 +325,7 @@ class Sistema:
                     print("Correo electrónico inválido.")
 
             cliente = Empresa(rut, nombre, pagina, telefono, correo)
-        else:
-            print ("Tipo cliente no disponible")
-            return None
-        
+
         if cliente:
             self.clientes.append(cliente)
             print("\nCliente registrado:")
