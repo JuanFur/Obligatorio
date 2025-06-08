@@ -115,14 +115,15 @@ class Sistema:
             return
 
         descripcion = input("Descripción de la máquina: ")
+        if descripcion.strip().lower() == "cancelar":
+            print("Registro de máquina cancelado.")
+            return
         while descripcion.strip() == "":
             descripcion = input("La descripción debe contener caracteres. Inténtelo de nuevo: ")
             if descripcion.strip().lower() == "cancelar":
                 print("Registro de máquina cancelado.")
                 return
 
-            descripcion = input("La descripcion debe contener caracteres. Intentalo de nuevo: ")
-            
         for i in self.maquinas:
             if i.descripcion == descripcion:
                 print(f"Ya existe una máquina con la descripción: {descripcion}")
@@ -145,6 +146,7 @@ class Sistema:
             for pieza in piezas_disponibles:
                 print(f"{pieza.codigo}: {pieza.descripcion} (Stock: {pieza.cantidad_disponible})")
 
+            # Solicitar código de pieza hasta que sea válido o se cancele
             codigo_valido = False
             while not codigo_valido:
                 codigo_pieza = input("Ingrese el código de la pieza a agregar (o 'No' para terminar, 'cancelar' para volver): ").strip()
@@ -169,44 +171,21 @@ class Sistema:
             if codigo_pieza.lower() == "no":
                 break
 
+            # Solicitar cantidad necesaria
             cantidad_valida = False
             while not cantidad_valida:
                 cantidad_input = input(f"Cantidad necesaria de '{pieza_seleccionada.descripcion}' (o 'cancelar' para volver): ")
                 if cantidad_input.strip().lower() == "cancelar":
                     print("Registro de máquina cancelado.")
                     return
-            codigo_pieza = input("Ingrese el código de la pieza a agregar (o ENTER para terminar): ")
-            if not codigo_pieza.strip():
-                break
-
-            try:
-                codigo_pieza = int(codigo_pieza)
-            except ValueError:
-                print("Código inválido.")
-                continue
-
-            pieza_seleccionada = None
-            for p in piezas_disponibles:
-                if p.codigo == codigo_pieza:
-                    pieza_seleccionada = p
-                    break
-
-            if pieza_seleccionada is None:
-                print("Pieza no encontrada o ya agregada.")
-                continue
-
-            # Validar cantidad necesaria
-            while True:
-                cantidad_input = input(f"Cantidad necesaria de '{pieza_seleccionada.descripcion}': ")
                 try:
                     cantidad = int(cantidad_input)
                     if cantidad <= 0:
                         print("La cantidad debe ser mayor a 0.")
-                        continue
+                    else:
+                        cantidad_valida = True
                 except ValueError:
                     print("Debe ingresar un número entero válido para la cantidad necesaria.")
-                    continue
-                break
 
             nueva_maquina.agregar_requerimiento(pieza_seleccionada, cantidad)
             piezas_agregadas.append(pieza_seleccionada.codigo)
@@ -217,8 +196,7 @@ class Sistema:
             return
 
         self.maquinas.append(nueva_maquina)
-        print(f"Máquina registrada ({nueva_maquina.codigo}).")
-        
+        print(f"Máquina registrada ({nueva_maquina.codigo}).")        
     def registrar_cliente(self):
         tipo = input("Seleccionar tipo cliente:\n1 Particular\n2 Empresa\n>")
         cliente = None
