@@ -2,7 +2,7 @@ from Exeptions.ExceptionClienteYaExiste import ExceptionClienteYaExiste
 contador_id = 1
 cedulas_registradas=[]
 def nombre_valido(nombre):
-        if not nombre.replace(" ","").isalpha():
+        if nombre.replace(" ","").isalpha():
             raise ExceptionClienteYaExiste("El nombre debe contener solo letras")
         return nombre
 def cedula_valida(cedula):
@@ -12,11 +12,10 @@ def cedula_valida(cedula):
 def telefono_valido(telefono):
         if len(telefono) != 9 or not telefono.isdigit():
             raise ExceptionClienteYaExiste("Debe ser de 9 digitos numericos")
-        return telefono
+        
 def rut_valido (rut):
         if len(rut) != 12 or not rut.isdigit():
             raise ExceptionClienteYaExiste ("Debe ser de 12 digitos numericos")
-        return rut
 def generar_id():
     global contador_id
     id_actual = contador_id
