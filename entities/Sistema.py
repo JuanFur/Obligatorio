@@ -109,19 +109,24 @@ class Sistema:
         print(f"Pieza registrada ({nueva_pieza.codigo}).")
 
     def registrar_maquina(self):
+        if not self.piezas:
+            print("Debe registrar al menos una pieza antes de registrar una máquina.")
+            return
+
         descripcion = input("Descripción de la máquina: ")
         if descripcion.strip().lower() == "cancelar":
             print("Registro de máquina cancelado.")
             return
         while descripcion.strip() == "":
-            descripcion = input("La descripcion debe contener caracteres. Intentalo de nuevo: ")
+            descripcion = input("La descripción debe contener caracteres. Inténtelo de nuevo: ")
             if descripcion.strip().lower() == "cancelar":
                 print("Registro de máquina cancelado.")
                 return
 
         for i in self.maquinas:
             if i.descripcion == descripcion:
-                raise ExceptionMaquinaYaExiste(descripcion)
+                print(f"Ya existe una máquina con la descripción: {descripcion}")
+                return
 
         nueva_maquina = Maquina(descripcion)
         piezas_agregadas = []
@@ -140,30 +145,30 @@ class Sistema:
             for pieza in piezas_disponibles:
                 print(f"{pieza.codigo}: {pieza.descripcion} (Stock: {pieza.cantidad_disponible})")
 
-            codigo_pieza = input("Ingrese el código de la pieza a agregar (o 'No' para terminar, 'cancelar' para volver): ").strip()
-            if codigo_pieza.lower() == "cancelar":
-                print("Registro de máquina cancelado.")
-                return
+            codigo_valido = False
+            while not codigo_valido:
+                codigo_pieza = input("Ingrese el código de la pieza a agregar (o 'No' para terminar, 'cancelar' para volver): ").strip()
+                if codigo_pieza.lower() == "cancelar":
+                    print("Registro de máquina cancelado.")
+                    return
+                if codigo_pieza.lower() == "no":
+                    break
+                try:
+                    codigo_pieza_int = int(codigo_pieza)
+                    pieza_seleccionada = None
+                    for p in piezas_disponibles:
+                        if p.codigo == codigo_pieza_int:
+                            pieza_seleccionada = p
+                            break
+                    if pieza_seleccionada is None:
+                        print("Pieza no encontrada o ya agregada.")
+                    else:
+                        codigo_valido = True
+                except ValueError:
+                    print("Código inválido. Debe ingresar un número.")
             if codigo_pieza.lower() == "no":
                 break
 
-            try:
-                codigo_pieza_int = int(codigo_pieza)
-            except ValueError:
-                print("Código inválido.")
-                codigo_pieza_int = None
-
-            pieza_seleccionada = None
-            if codigo_pieza_int is not None:
-                for p in piezas_disponibles:
-                    if p.codigo == codigo_pieza_int:
-                        pieza_seleccionada = p
-                        break
-
-        if pieza_seleccionada is None:
-            print("Pieza no encontrada o ya agregada.")
-            
-        else:
             cantidad_valida = False
             while not cantidad_valida:
                 cantidad_input = input(f"Cantidad necesaria de '{pieza_seleccionada.descripcion}' (o 'cancelar' para volver): ")
@@ -434,5 +439,3 @@ class Sistema:
             if pieza.descripcion == descripcion:
                 return True
         return False
-    
-
