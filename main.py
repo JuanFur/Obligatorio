@@ -66,11 +66,9 @@ def main():
                 opcion_listar = input("Seleccione una opción: ").strip()
 
                 if opcion_listar == "1":
-                    # listar_clientes()
-                    pass
+                    sistema.listar_clientes()
                 elif opcion_listar == "2":
-                    # listar_pedidos()
-                    pass
+                    sistema.listar_pedidos()
                 elif opcion_listar == "3":
                     sistema.listar_maquinas()
                 elif opcion_listar == "4":
