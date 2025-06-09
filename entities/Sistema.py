@@ -78,7 +78,7 @@ def ingresar_float(msg, min_value = 0):
     
 
 class Sistema:
-    def __init__(self):
+    def _init_(self):
         self.piezas = []
         self.maquinas = []
         self.clientes = []
