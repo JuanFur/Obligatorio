@@ -182,6 +182,9 @@ class Sistema:
 
             while True:
                 correo = input("Ingrese correo electrónico: ").strip()
+                if "@" in correo and correo.count("@") == 1 and correo.index("@") > 0 and "." in correo[correo.index("@"):]:
+                    break
+                print("Correo electrónico inválido. Debe contener un solo '@' y un punto luego del '@'.")
 
             cliente = ClienteParticular(nombre, cedula, telefono, correo)
 

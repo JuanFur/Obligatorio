@@ -2,7 +2,7 @@ from Exeptions.ExceptionClienteYaExiste import ExceptionClienteYaExiste
 contador_id = 1
 cedulas_registradas=[]
 def nombre_valido(nombre):
-        if nombre.replace(" ","").isalpha():
+        if not nombre.replace(" ","").isalpha():
             raise ExceptionClienteYaExiste("El nombre debe contener solo letras")
         return nombre
 def cedula_valida(cedula):
