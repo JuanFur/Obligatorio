@@ -178,7 +178,7 @@ class Sistema:
                 telefono = input("Ingrese teléfono (9 dígitos): ").strip()
                 if len(telefono) == 9 and telefono.isdigit():
                     break
-                print("El teléfono debe tener exactamente 8 dígitos numéricos.")
+                print("El teléfono debe tener exactamente 9 dígitos numéricos.")
 
             while True:
                 correo = input("Ingrese correo electrónico: ").strip()
@@ -344,9 +344,26 @@ class Sistema:
             print("No hay piezas registradas.")
             return None
         print("\nListado de piezas:")
-        print(f"{'Código':<6} {'Descripción':<20} {'Stock':<8} {'Tamaño lote':<12} {'Costo':<8}")
+        print(f"{'Código':<6} {'Descripción':<20} {'Stock disponible':<16} {'Tamaño lote':<12} {'Costo en $':<10} {'Faltante para pedidos':<22} {'Lotes recomendados':<18}")
         for pieza in self.piezas:
-            print(f"{pieza.codigo:<6} {pieza.descripcion:<20} {pieza.cantidad_disponible:<8} {pieza.tamanio_lote:<12} {pieza.costo:<8.2f}")
+            faltante = 0
+            for pedido in self.pedidos:
+                if "estado" in pedido.__dict__ and pedido.estado.lower() == "pendiente":
+                    if "maquina" in pedido.__dict__:
+                        maquina = pedido.maquina
+                        if "requerimientos" in maquina.__dict__:
+                            for req in maquina.requerimientos:
+                                # req.pieza puede ser un objeto, chequeo por código
+                                if "pieza" in req.__dict__ and "codigo" in req.pieza.__dict__:
+                                    if req.pieza.codigo == pieza.codigo:
+                                        cantidad_necesaria = req.cantidad
+                                        if pieza.cantidad_disponible < cantidad_necesaria:
+                                            faltante += (cantidad_necesaria - pieza.cantidad_disponible)
+            if faltante > 0:
+                lotes_recomendados = (faltante + pieza.tamanio_lote - 1) // pieza.tamanio_lote
+            else:
+                lotes_recomendados = 0
+            print(f"{pieza.codigo:<6} {pieza.descripcion:<20} {pieza.cantidad_disponible:<16} {pieza.tamanio_lote:<12} {pieza.costo:<10.2f} {faltante:<22} {lotes_recomendados:<18}")
 
     def listar_maquinas(self):
         if not self.maquinas:
