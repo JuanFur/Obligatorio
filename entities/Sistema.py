@@ -28,7 +28,7 @@ class Sistema:
             if not descripcion:
                 print("La descripción no puede estar vacía. Intente nuevamente.")
             elif self.descripcion_ya_existe(descripcion):
-                print(f"Ya existe una pieza con la descripción: {descripcion}")
+                raise ExceptionPiezaYaExiste(f"Ya existe una pieza con la descripción: {descripcion}")
             else:
                 break
 
@@ -89,7 +89,7 @@ class Sistema:
                         existe = True
                         break
                 if existe:
-                    print(f"Ya existe una máquina con la descripción: {descripcion}")
+                    raise ExceptionMaquinaYaExiste(f"Ya existe una máquina con la descripción: {descripcion}")
                 else:
                     break
 
@@ -193,7 +193,7 @@ class Sistema:
                             break
                 if es_numero:
                     if cedula_duplicada:
-                        print("La cédula ya está registrada en el sistema.")
+                        raise ExceptionClienteYaExiste("La cédula ya está registrada en el sistema.")
                     else:
                         break
                 else:
@@ -247,7 +247,7 @@ class Sistema:
                             break
                 if es_numero:
                     if rut_duplicado:
-                        print("El RUT ya está registrado en el sistema.")
+                        raise ExceptionClienteYaExiste("El RUT ya está registrado en el sistema.")
                     else:
                         break
                 else:
