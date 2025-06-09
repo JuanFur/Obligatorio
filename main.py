@@ -74,8 +74,7 @@ def main():
                 elif opcion_listar == "4":
                     sistema.listar_piezas()
                 elif opcion_listar == "5":
-                    # mostrar_contabilidad()
-                    pass
+                    sistema.listar_contabilidad()
                 elif opcion_listar == "6":
                     break
                 else:
