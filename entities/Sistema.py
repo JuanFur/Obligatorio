@@ -5,8 +5,31 @@ from Exeptions.ExceptionPiezaYaExiste import ExceptionPiezaYaExiste
 from Exeptions.ExceptionMaquinaYaExiste import ExceptionMaquinaYaExiste
 from entities.Pedido import Pedido
 from Exeptions.ExceptionValorInvalido import ExceptionValorInvalido
-from Exeptions.ExceptionClienteYaExiste import ExceptionClienteYaExiste
-from entities.Clientes import nombre_valido,cedula_valida,telefono_valido,rut_valido
+from entities.Reposicion import Reposicion
+
+# Agregar import o definición de la excepción y funciones de validación
+class ExceptionClienteYaExiste(Exception):
+    pass
+
+def nombre_valido(nombre):
+    if not nombre or not nombre.strip():
+        raise ExceptionClienteYaExiste("El nombre no puede estar vacío.")
+    # Aquí puedes agregar más validaciones si es necesario
+
+def cedula_valida(cedula):
+    if not cedula or not cedula.strip():
+        raise ExceptionClienteYaExiste("La cédula no puede estar vacía.")
+    # Aquí puedes agregar más validaciones si es necesario
+
+def telefono_valido(telefono):
+    if not telefono or not telefono.strip():
+        raise ExceptionClienteYaExiste("El teléfono no puede estar vacío.")
+    # Aquí puedes agregar más validaciones si es necesario
+
+def rut_valido(rut):
+    if not rut or not rut.strip():
+        raise ExceptionClienteYaExiste("El RUT no puede estar vacío.")
+    # Aquí puedes agregar más validaciones si es necesario
 
 def ingresar_int(msg, min_value = 0):
 
@@ -53,11 +76,12 @@ def ingresar_float(msg, min_value = 0):
     
 
 class Sistema:
-    def __init__(self):
+    def _init_(self):
         self.piezas = []
         self.maquinas = []
         self.clientes = []
         self.pedidos = []
+        self.reposiciones = []        
 
     def registrar_pieza(self):
         descripcion = input("Descripción: ").strip()
@@ -108,15 +132,25 @@ class Sistema:
         self.piezas.append(nueva_pieza)
         print(f"Pieza registrada ({nueva_pieza.codigo}).")
 
-
     def registrar_maquina(self):
+        if not self.piezas:
+            print("Debe registrar al menos una pieza antes de registrar una máquina.")
+            return
+
         descripcion = input("Descripción de la máquina: ")
+        if descripcion.strip().lower() == "cancelar":
+            print("Registro de máquina cancelado.")
+            return
         while descripcion.strip() == "":
-            descripcion = input("La descripcion debe contener caracteres. Intentalo de nuevo: ")
-            
+            descripcion = input("La descripción debe contener caracteres. Inténtelo de nuevo: ")
+            if descripcion.strip().lower() == "cancelar":
+                print("Registro de máquina cancelado.")
+                return
+
         for i in self.maquinas:
             if i.descripcion == descripcion:
-                raise ExceptionMaquinaYaExiste(descripcion)
+                print(f"Ya existe una máquina con la descripción: {descripcion}")
+                return
 
         nueva_maquina = Maquina(descripcion)
         piezas_agregadas = []
@@ -135,38 +169,46 @@ class Sistema:
             for pieza in piezas_disponibles:
                 print(f"{pieza.codigo}: {pieza.descripcion} (Stock: {pieza.cantidad_disponible})")
 
-            codigo_pieza = input("Ingrese el código de la pieza a agregar (o ENTER para terminar): ")
-            if not codigo_pieza.strip():
+            # Solicitar código de pieza hasta que sea válido o se cancele
+            codigo_valido = False
+            while not codigo_valido:
+                codigo_pieza = input("Ingrese el código de la pieza a agregar (o 'No' para terminar, 'cancelar' para volver): ").strip()
+                if codigo_pieza.lower() == "cancelar":
+                    print("Registro de máquina cancelado.")
+                    return
+                if codigo_pieza.lower() == "no":
+                    break
+                try:
+                    codigo_pieza_int = int(codigo_pieza)
+                    pieza_seleccionada = None
+                    for p in piezas_disponibles:
+                        if p.codigo == codigo_pieza_int:
+                            pieza_seleccionada = p
+                            break
+                    if pieza_seleccionada is None:
+                        print("Pieza no encontrada o ya agregada.")
+                    else:
+                        codigo_valido = True
+                except ValueError:
+                    print("Código inválido. Debe ingresar un número.")
+            if codigo_pieza.lower() == "no":
                 break
 
-            try:
-                codigo_pieza = int(codigo_pieza)
-            except ValueError:
-                print("Código inválido.")
-                continue
-
-            pieza_seleccionada = None
-            for p in piezas_disponibles:
-                if p.codigo == codigo_pieza:
-                    pieza_seleccionada = p
-                    break
-
-            if pieza_seleccionada is None:
-                print("Pieza no encontrada o ya agregada.")
-                continue
-
-            # Validar cantidad necesaria
-            while True:
-                cantidad_input = input(f"Cantidad necesaria de '{pieza_seleccionada.descripcion}': ")
+            # Solicitar cantidad necesaria
+            cantidad_valida = False
+            while not cantidad_valida:
+                cantidad_input = input(f"Cantidad necesaria de '{pieza_seleccionada.descripcion}' (o 'cancelar' para volver): ")
+                if cantidad_input.strip().lower() == "cancelar":
+                    print("Registro de máquina cancelado.")
+                    return
                 try:
                     cantidad = int(cantidad_input)
                     if cantidad <= 0:
                         print("La cantidad debe ser mayor a 0.")
-                        continue
+                    else:
+                        cantidad_valida = True
                 except ValueError:
                     print("Debe ingresar un número entero válido para la cantidad necesaria.")
-                    continue
-                break
 
             nueva_maquina.agregar_requerimiento(pieza_seleccionada, cantidad)
             piezas_agregadas.append(pieza_seleccionada.codigo)
@@ -177,71 +219,72 @@ class Sistema:
             return
 
         self.maquinas.append(nueva_maquina)
-        print(f"Máquina registrada ({nueva_maquina.codigo}).")
-        
+        print(f"Máquina registrada ({nueva_maquina.codigo}).")        
+
     def registrar_cliente(self):
-        tipo = input("Seleccionar tipo cliente:\n1 Particular\n2 Empresa\n>")
-        cliente = None
-        if tipo == "1":
-            while True:
-                nombre = input("Ingrese nombre completo: ")
-                try:
-                    nombre_valido(nombre)
-                    break
-                except ExceptionClienteYaExiste as e:
-                    print(e)
-            while True:
-                cedula = input("Ingrese cédula: ")
-                try:
-                    cedula_valida(cedula)
-                    break
-                except ExceptionClienteYaExiste as e:
-                    print(e)
-            while True:
-                telefono = input("Ingrese teléfono: ")
-                try:
-                    telefono_valido(telefono)
-                    break
-                except ExceptionClienteYaExiste as e:
-                    print(e)
-            while True:
-                correo = input("Ingrese correo electrónico: ")
-                cliente = ClienteParticular(nombre, cedula, telefono, correo)
-        elif tipo == "2":
-            while True:
-                rut = input("Ingrese RUT: ")
-                try:
-                    rut_valido(rut)
-                    break
-                except ExceptionClienteYaExiste as e:
-                    print(e)
-            while True:
-                nombre = input("Ingrese nombre de la empresa: ")
-                try:
-                    nombre_valido(nombre)
-                    break
-                except ExceptionClienteYaExiste as e:
-                    print(e)
-            pagina = input("Ingrese página web: ")
-            while True:
-                telefono = input("Ingrese teléfono de contacto: ")
-                try:
-                    telefono_valido(telefono)
-                    break
-                except ExceptionClienteYaExiste as e:
-                    print(e)
+            tipo = input("Seleccionar tipo cliente:\n1 Particular\n2 Empresa\n>")
+            cliente = None
+            if tipo == "1":
+                while True:
+                    nombre = input("Ingrese nombre completo: ")
+                    try:
+                        nombre_valido(nombre)
+                        break
+                    except ExceptionClienteYaExiste as e:
+                        print(e)
+                while True:
+                    cedula = input("Ingrese cédula: ")
+                    try:
+                        cedula_valida(cedula)
+                        break
+                    except ExceptionClienteYaExiste as e:
+                        print(e)
+                while True:
+                    telefono = input("Ingrese teléfono: ")
+                    try:
+                        telefono_valido(telefono)
+                        break
+                    except ExceptionClienteYaExiste as e:
+                        print(e)
+                    correo = input("Ingrese correo electrónico: ")
+                    cliente = ClienteParticular(nombre, cedula, telefono, correo)
+            elif tipo == "2":
+                while True:
+                    rut = input("Ingrese RUT: ")
+                    try:
+                        rut_valido(rut)
+                        break
+                    except ExceptionClienteYaExiste as e:
+                        print(e)
+                while True:
+                    nombre = input("Ingrese nombre de la empresa: ")
+                    try:
+                        nombre_valido(nombre)
+                        break
+                    except ExceptionClienteYaExiste as e:
+                        print(e)
+                pagina = input("Ingrese página web: ")
+                while True:
+                    telefono = input("Ingrese teléfono de contacto: ")
+                    try:
+                        telefono_valido(telefono)
+                        break
+                    except ExceptionClienteYaExiste as e:
+                        print(e)
+                
+                correo = input("Ingrese correo electrónico de contacto: ")
+                cliente = Empresa(rut, nombre, pagina, telefono, correo)
+            else:
+                print ("Tipo cliente no disponible")
+                return None
             
-            correo = input("Ingrese correo electrónico de contacto: ")
-            cliente = Empresa(rut, nombre, pagina, telefono, correo)
-        else:
-            print ("Tipo cliente no disponible")
-            return None
+            if cliente:
+                self.clientes.append(cliente)
+                print("\nCliente registrado:")
+                print(cliente)
+                return cliente
         
-        if cliente:
-            self.clientes.append(cliente)
-            print("\nCliente registrado:")
-            print(cliente)
-            return cliente
+
     
     def registrar_pedido(self):
         if not self.clientes:
@@ -303,6 +346,101 @@ class Sistema:
         for maquina in self.maquinas:
             disponible = "Sí" if maquina.stock > 0 else "No"
             print(f"{maquina.codigo:<6} {maquina.descripcion:<20} {maquina.costo_produccion():<12.2f} {disponible:<10}")   
+
+    def listar_clientes(self):
+        if not self.clientes:
+            print("\nNo hay clientes registrados.")
+            return
+        print("\nLista de clientes") 
+        print(f"{'ID':<5} {'Nombre':<30} {'Tipo':<15} {'Contacto':<20}")
+        for cliente in self.clientes:
+            try:
+                nombre = cliente.nombre_completo
+            except AttributeError:
+                try:
+                    nombre = cliente.nombre
+                except AttributeError:
+                    nombre = "-"
+            try:
+                tipo = cliente.tipo
+            except AttributeError:
+                tipo = "-"
+            try:
+                telefono = cliente.telefono
+            except AttributeError:
+                telefono = "-"
+            try:
+                id_cliente = cliente.id
+            except AttributeError:
+                id_cliente = "-"
+            print(f"{id_cliente:<5} {nombre:<30} {tipo:<15} {telefono:<20}")
+    
+    def listar_pedidos(self):
+        if not self.pedidos:
+            print("No hay pedidos registrados.")
+            return None
+
+        print("\n¿Desea filtrar los pedidos por estado?")
+        print("1. Pendientes")
+        print("2. Entregados")
+        print("3. No filtrar (mostrar todos)")
+        opcion = input("Seleccione una opción: ").strip()
+
+        pedidos_filtrados = []
+        if opcion == "1":
+            for pedido in self.pedidos:
+                if hasattr(pedido, "estado") and pedido.estado.lower() == "pendiente":
+                    pedidos_filtrados.append(pedido)
+        elif opcion == "2":
+            for pedido in self.pedidos:
+                if hasattr(pedido, "estado") and pedido.estado.lower() == "entregado":
+                    pedidos_filtrados.append(pedido)
+        else:
+            pedidos_filtrados = self.pedidos
+
+        if not pedidos_filtrados:
+            print("No hay pedidos para mostrar con ese filtro.")
+            return
+
+        print("\nListado de pedidos:")
+        print(f"{'ID':<5} {'Cliente':<30} {'Máquina':<20} {'Estado':<15} {'Precio':<10} {'Fecha recepción':<20}")
+        for pedido in pedidos_filtrados:
+            try:
+                nombre_cliente = pedido.cliente.nombre_completo
+            except AttributeError:
+                try:
+                    nombre_cliente = pedido.cliente.nombre
+                except AttributeError:
+                    nombre_cliente = "-"
+            print(f"{pedido.id:<5} {nombre_cliente:<30} {pedido.maquina.descripcion:<20} {pedido.estado:<15} {pedido.precio:<10.2f} {pedido.fecha_recibimiento.strftime('%Y-%m-%d %H:%M:%S'):<20}")
+
+    def listar_contabilidad(self):
+        pedidos_entregados = []
+        for p in self.pedidos:
+            if hasattr(p, "estado") and p.estado.lower() == "entregado":
+                pedidos_entregados.append(p)
+
+        if not pedidos_entregados:
+            print("No hay pedidos entregados para mostrar contabilidad.")
+            return
+
+        costo_total = 0
+        ingreso_total = 0
+
+        for pedido in pedidos_entregados:
+            costo_total += pedido.maquina.costo_produccion()
+            ingreso_total += pedido.precio
+
+        ganancia = ingreso_total - costo_total
+        impuesto = ganancia * 0.25
+        ganancia_final = ganancia - impuesto
+
+        print("\n--- Contabilidad ---")
+        print(f"Costo total de producción: USD {costo_total:.2f}")
+        print(f"Ingreso total por ventas: USD {ingreso_total:.2f}")
+        print(f"Ganancia bruta: USD {ganancia:.2f}")
+        print(f"Impuesto a la ganancia (25% IRAE): USD {impuesto:.2f}")
+        print(f"Ganancia final (después de impuestos): USD {ganancia_final:.2f}")
 
     def descripcion_ya_existe(self, descripcion):
         for pieza in self.piezas:
