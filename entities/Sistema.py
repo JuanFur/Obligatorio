@@ -420,23 +420,27 @@ class Sistema:
 
     # ----------- ACTUALIZAR PEDIDOS PENDIENTES -----------
     def actualizar_pedidos_pendientes(self):
-        for pedido in self.pedidos:
-            if "estado" in pedido.__dict__ and pedido.estado == "pendiente":
-                maquina = pedido.maquina
-                puede_entregar = True
-                # Verificar si hay stock suficiente para todos los requerimientos
-                for req in maquina.requerimientos:
-                    pieza = req.pieza
-                    if pieza.cantidad_disponible < req.cantidad:
-                        puede_entregar = False
-                        break
-                if puede_entregar:
-                    # Descontar stock y marcar como entregado
+        hubo_cambio = True
+        while hubo_cambio:
+            hubo_cambio = False
+            for pedido in self.pedidos:
+                if "estado" in pedido.__dict__ and pedido.estado == "pendiente":
+                    maquina = pedido.maquina
+                    puede_entregar = True
+                    # Verificar si hay stock suficiente para todos los requerimientos
                     for req in maquina.requerimientos:
-                        req.pieza.cantidad_disponible -= req.cantidad
-                    pedido.estado = "entregado"
-                    from datetime import datetime
-                    pedido.fecha_entrega = datetime.now()
+                        pieza = req.pieza
+                        if pieza.cantidad_disponible < req.cantidad:
+                            puede_entregar = False
+                            break
+                    if puede_entregar:
+                        # Descontar stock y marcar como entregado
+                        for req in maquina.requerimientos:
+                            req.pieza.cantidad_disponible -= req.cantidad
+                        pedido.estado = "entregado"
+                        from datetime import datetime
+                        pedido.fecha_entrega = datetime.now()
+                        hubo_cambio = True  # Hubo un cambio, volver a chequear todos los pedidos
 
     # ----------- LISTADOS -----------
     def listar_piezas(self):
@@ -505,11 +509,11 @@ class Sistema:
         pedidos_filtrados = []
         if opcion == "1":
             for pedido in self.pedidos:
-                if "estado" in pedido.__dict__ and pedido.estado == "pendiente":
+                if "estado" in pedido.__dict__ and str(pedido.estado).lower() == "pendiente":
                     pedidos_filtrados.append(pedido)
         elif opcion == "2":
             for pedido in self.pedidos:
-                if "estado" in pedido.__dict__ and pedido.estado == "entregado":
+                if "estado" in pedido.__dict__ and str(pedido.estado).lower() == "entregado":
                     pedidos_filtrados.append(pedido)
         else:
             pedidos_filtrados = self.pedidos
