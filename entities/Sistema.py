@@ -175,8 +175,8 @@ class Sistema:
                     print("La cédula debe tener exactamente 8 dígitos numéricos, sin guiones.")
 
             while True:
-                telefono = input("Ingrese teléfono (8 dígitos): ").strip()
-                if len(telefono) == 8 and telefono.isdigit():
+                telefono = input("Ingrese teléfono (9 dígitos): ").strip()
+                if len(telefono) == 9 and telefono.isdigit():
                     break
                 print("El teléfono debe tener exactamente 8 dígitos numéricos.")
 
