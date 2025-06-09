@@ -1,6 +1,7 @@
 from entities.Sistema import Sistema
 from Exeptions.ExceptionPiezaYaExiste import ExceptionPiezaYaExiste
 from Exeptions.ExceptionMaquinaYaExiste import ExceptionMaquinaYaExiste
+from Exeptions.ExceptionClienteYaExiste import ExceptionClienteYaExiste
 
 def mostrar_menu_principal():
     print("\n=== Menú Principal ===")
@@ -49,12 +50,14 @@ def main():
                     except ExceptionMaquinaYaExiste as e:
                         print(e)
                 elif opcion_registrar == "3":
-                    sistema.registrar_cliente()
+                    try:
+                        sistema.registrar_cliente()
+                    except ExceptionClienteYaExiste as e:
+                        print(e)
                 elif opcion_registrar == "4":
                     sistema.registrar_pedido()
                 elif opcion_registrar == "5":
                     sistema.registrar_reposicion()
-                    pass
                 elif opcion_registrar == "6":
                     break
                 else:
@@ -87,4 +90,4 @@ def main():
             print("Opción inválida. Intente nuevamente.")
 
 if __name__ == "__main__":
-    main() 
+    main()
