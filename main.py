@@ -2,6 +2,7 @@ from entities.Sistema import Sistema
 from Exeptions.ExceptionPiezaYaExiste import ExceptionPiezaYaExiste
 from Exeptions.ExceptionMaquinaYaExiste import ExceptionMaquinaYaExiste
 from Exeptions.ExceptionClienteYaExiste import ExceptionClienteYaExiste
+from Exeptions.ExceptionValorInvalido import ExceptionValorInvalido
 
 def mostrar_menu_principal():
     print("\n=== Menú Principal ===")
@@ -44,15 +45,21 @@ def main():
                         sistema.registrar_pieza()
                     except ExceptionPiezaYaExiste as e:
                         print(e)
+                    except ExceptionValorInvalido as e:
+                        print(e)
                 elif opcion_registrar == "2":
                     try:
                         sistema.registrar_maquina()
                     except ExceptionMaquinaYaExiste as e:
                         print(e)
+                    except ExceptionValorInvalido as e:
+                        print(e)
                 elif opcion_registrar == "3":
                     try:
                         sistema.registrar_cliente()
                     except ExceptionClienteYaExiste as e:
+                        print(e)
+                    except ExceptionValorInvalido as e:
                         print(e)
                 elif opcion_registrar == "4":
                     sistema.registrar_pedido()
