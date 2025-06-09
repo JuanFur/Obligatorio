@@ -33,7 +33,7 @@ def main():
         mostrar_menu_principal()
         opcion_principal = input("Seleccione una opción: ").strip()
 
-        if opcion_principal == "1":  # Registrar
+        if opcion_principal == "1":  
             while True:
                 mostrar_menu_registrar()
                 opcion_registrar = input("Seleccione una opción: ").strip()
@@ -60,7 +60,7 @@ def main():
                 else:
                     print("Opción inválida. Intente nuevamente.")
 
-        elif opcion_principal == "2":  # Listar
+        elif opcion_principal == "2":  
             while True:
                 mostrar_menu_listar()
                 opcion_listar = input("Seleccione una opción: ").strip()

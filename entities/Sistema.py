@@ -16,7 +16,6 @@ class Sistema:
         self.pedidos = []
         self.reposiciones = []
 
-    # ----------- PIEZAS -----------
     def descripcion_ya_existe(self, descripcion):
         for pieza in self.piezas:
             if pieza.descripcion.lower() == descripcion.lower():
@@ -71,7 +70,6 @@ class Sistema:
         print(f"Pieza registrada ({nueva_pieza.codigo}).")
         self.actualizar_pedidos_pendientes()
 
-    # ----------- MAQUINAS -----------
     def registrar_maquina(self):
         if not self.piezas:
             print("Debe registrar al menos una pieza antes de registrar una máquina.")
@@ -99,7 +97,10 @@ class Sistema:
         piezas_agregadas = []
 
         while True:
-            piezas_disponibles = [pieza for pieza in self.piezas if pieza.codigo not in piezas_agregadas]
+            piezas_disponibles = []
+            for pieza in self.piezas:
+                if pieza.codigo not in piezas_agregadas:
+                    piezas_disponibles.append(pieza)
             if not piezas_disponibles:
                 print("No hay más piezas disponibles para agregar.")
                 break
@@ -153,7 +154,6 @@ class Sistema:
         self.maquinas.append(nueva_maquina)
         print(f"Máquina registrada ({nueva_maquina.codigo}).")
 
-    # ----------- CLIENTES -----------
     def registrar_cliente(self):
         while True:
             tipo = input("Seleccionar tipo cliente:\n1 Particular\n2 Empresa\n>").strip()
@@ -164,7 +164,6 @@ class Sistema:
         cliente = None
 
         if tipo == "1":
-            # Cliente Particular
             while True:
                 nombre = input("Ingrese nombre completo (solo letras y espacios): ").strip()
                 solo_letras = True
@@ -230,7 +229,6 @@ class Sistema:
             cliente = ClienteParticular(nombre, cedula, telefono, correo)
 
         elif tipo == "2":
-            # Empresa
             while True:
                 rut = input("Ingrese RUT (12 dígitos, sin guiones): ").strip()
                 es_numero = True
@@ -312,7 +310,6 @@ class Sistema:
             print(cliente)
             return cliente
 
-    # ----------- REPOSICION -----------
     def registrar_reposicion(self):
         if not self.piezas:
             print("No hay piezas registradas para reponer.")
@@ -369,7 +366,6 @@ class Sistema:
         print(f"Fecha de reposición: {reposicion.fecha.strftime('%Y-%m-%d %H:%M:%S')}")
         self.actualizar_pedidos_pendientes()
 
-    # ----------- PEDIDOS -----------
     def registrar_pedido(self):
         if not self.clientes:
             print("No hay clientes registrados. Registre un cliente")
@@ -418,7 +414,6 @@ class Sistema:
         print(f"Fecha de recepción: {nuevo_pedido.fecha_recibimiento.strftime('%Y-%m-%d %H:%M:%S')}")
         self.actualizar_pedidos_pendientes()
 
-    # ----------- ACTUALIZAR PEDIDOS PENDIENTES -----------
     def actualizar_pedidos_pendientes(self):
         hubo_cambio = True
         while hubo_cambio:
@@ -427,22 +422,19 @@ class Sistema:
                 if "estado" in pedido.__dict__ and pedido.estado == "pendiente":
                     maquina = pedido.maquina
                     puede_entregar = True
-                    # Verificar si hay stock suficiente para todos los requerimientos
                     for req in maquina.requerimientos:
                         pieza = req.pieza
                         if pieza.cantidad_disponible < req.cantidad:
                             puede_entregar = False
                             break
                     if puede_entregar:
-                        # Descontar stock y marcar como entregado
                         for req in maquina.requerimientos:
                             req.pieza.cantidad_disponible -= req.cantidad
                         pedido.estado = "entregado"
                         from datetime import datetime
                         pedido.fecha_entrega = datetime.now()
-                        hubo_cambio = True  # Hubo un cambio, volver a chequear todos los pedidos
+                        hubo_cambio = True
 
-    # ----------- LISTADOS -----------
     def listar_piezas(self):
         if not self.piezas:
             print("No hay piezas registradas.")
