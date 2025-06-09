@@ -69,6 +69,7 @@ class Sistema:
         nueva_pieza = Pieza(descripcion, costo, tamanio_lote, cantidad)
         self.piezas.append(nueva_pieza)
         print(f"Pieza registrada ({nueva_pieza.codigo}).")
+        self.actualizar_pedidos_pendientes()
 
     # ----------- MAQUINAS -----------
     def registrar_maquina(self):
@@ -83,10 +84,16 @@ class Sistema:
                 return
             if not descripcion:
                 print("La descripción debe contener caracteres. Inténtelo de nuevo.")
-            elif any(m.descripcion.lower() == descripcion.lower() for m in self.maquinas):
-                print(f"Ya existe una máquina con la descripción: {descripcion}")
             else:
-                break
+                existe = False
+                for m in self.maquinas:
+                    if m.descripcion.lower() == descripcion.lower():
+                        existe = True
+                        break
+                if existe:
+                    print(f"Ya existe una máquina con la descripción: {descripcion}")
+                else:
+                    break
 
         nueva_maquina = Maquina(descripcion)
         piezas_agregadas = []
@@ -150,7 +157,7 @@ class Sistema:
     def registrar_cliente(self):
         while True:
             tipo = input("Seleccionar tipo cliente:\n1 Particular\n2 Empresa\n>").strip()
-            if tipo in ("1", "2"):
+            if tipo == "1" or tipo == "2":
                 break
             print("Tipo cliente no disponible. Ingrese 1 o 2.")
 
@@ -160,14 +167,33 @@ class Sistema:
             # Cliente Particular
             while True:
                 nombre = input("Ingrese nombre completo (solo letras y espacios): ").strip()
-                if nombre.replace(" ", "").isalpha():
+                solo_letras = True
+                for c in nombre:
+                    if not ((c >= "A" and c <= "Z") or (c >= "a" and c <= "z") or c == " "):
+                        solo_letras = False
+                        break
+                if solo_letras and nombre != "":
                     break
                 print("El nombre debe contener solo letras y espacios.")
 
             while True:
                 cedula = input("Ingrese cédula (8 dígitos, sin guiones): ").strip()
-                if len(cedula) == 8 and cedula.isdigit():
-                    if any(getattr(c, "cedula", None) == cedula for c in self.clientes):
+                es_numero = True
+                if len(cedula) == 8:
+                    for c in cedula:
+                        if not (c >= "0" and c <= "9"):
+                            es_numero = False
+                            break
+                else:
+                    es_numero = False
+                cedula_duplicada = False
+                for cli in self.clientes:
+                    if "cedula" in cli.__dict__:
+                        if cli.cedula == cedula:
+                            cedula_duplicada = True
+                            break
+                if es_numero:
+                    if cedula_duplicada:
                         print("La cédula ya está registrada en el sistema.")
                     else:
                         break
@@ -176,15 +202,30 @@ class Sistema:
 
             while True:
                 telefono = input("Ingrese teléfono (9 dígitos): ").strip()
-                if len(telefono) == 9 and telefono.isdigit():
+                es_numero = True
+                if len(telefono) == 9:
+                    for c in telefono:
+                        if not (c >= "0" and c <= "9"):
+                            es_numero = False
+                            break
+                else:
+                    es_numero = False
+                if es_numero:
                     break
                 print("El teléfono debe tener exactamente 9 dígitos numéricos.")
 
             while True:
                 correo = input("Ingrese correo electrónico: ").strip()
-                if "@" in correo and correo.count("@") == 1 and correo.index("@") > 0 and "." in correo[correo.index("@"):]:
+                tiene_arroba = False
+                tiene_letra = False
+                for c in correo:
+                    if c == "@":
+                        tiene_arroba = True
+                    if (c >= "A" and c <= "Z") or (c >= "a" and c <= "z"):
+                        tiene_letra = True
+                if tiene_arroba and tiene_letra:
                     break
-                print("Correo electrónico inválido. Debe contener un solo '@' y un punto luego del '@'.")
+                print("Correo electrónico inválido. Debe contener letras y un '@'.")
 
             cliente = ClienteParticular(nombre, cedula, telefono, correo)
 
@@ -192,8 +233,22 @@ class Sistema:
             # Empresa
             while True:
                 rut = input("Ingrese RUT (12 dígitos, sin guiones): ").strip()
-                if len(rut) == 12 and rut.isdigit():
-                    if any(getattr(c, "rut", None) == rut for c in self.clientes):
+                es_numero = True
+                if len(rut) == 12:
+                    for c in rut:
+                        if not (c >= "0" and c <= "9"):
+                            es_numero = False
+                            break
+                else:
+                    es_numero = False
+                rut_duplicado = False
+                for cli in self.clientes:
+                    if "rut" in cli.__dict__:
+                        if cli.rut == rut:
+                            rut_duplicado = True
+                            break
+                if es_numero:
+                    if rut_duplicado:
                         print("El RUT ya está registrado en el sistema.")
                     else:
                         break
@@ -202,27 +257,52 @@ class Sistema:
 
             while True:
                 nombre = input("Ingrese nombre de la empresa (solo letras y espacios): ").strip()
-                if nombre.replace(" ", "").isalpha():
+                solo_letras = True
+                for c in nombre:
+                    if not ((c >= "A" and c <= "Z") or (c >= "a" and c <= "z") or c == " "):
+                        solo_letras = False
+                        break
+                if solo_letras and nombre != "":
                     break
                 print("El nombre debe contener solo letras y espacios.")
 
             while True:
                 pagina = input("Ingrese página web (sin espacios): ").strip()
-                if pagina and " " not in pagina:
+                tiene_espacio = False
+                for c in pagina:
+                    if c == " ":
+                        tiene_espacio = True
+                        break
+                if pagina != "" and not tiene_espacio:
                     break
                 print("Página web inválida. No debe contener espacios.")
 
             while True:
-                telefono = input("Ingrese teléfono de contacto (8 dígitos): ").strip()
-                if len(telefono) == 8 and telefono.isdigit():
+                telefono = input("Ingrese teléfono de contacto (9 dígitos): ").strip()
+                es_numero = True
+                if len(telefono) == 9:
+                    for c in telefono:
+                        if not (c >= "0" and c <= "9"):
+                            es_numero = False
+                            break
+                else:
+                    es_numero = False
+                if es_numero:
                     break
-                print("El teléfono debe tener exactamente 8 dígitos numéricos.")
+                print("El teléfono debe tener exactamente 9 dígitos numéricos.")
 
             while True:
                 correo = input("Ingrese correo electrónico de contacto: ").strip()
-                if "@" in correo and correo.count("@") == 1 and correo.index("@") > 0 and "." in correo[correo.index("@"):]:
+                tiene_arroba = False
+                tiene_letra = False
+                for c in correo:
+                    if c == "@":
+                        tiene_arroba = True
+                    if (c >= "A" and c <= "Z") or (c >= "a" and c <= "z"):
+                        tiene_letra = True
+                if tiene_arroba and tiene_letra:
                     break
-                print("Correo electrónico inválido. Debe contener un solo '@' y un punto luego del '@'.")
+                print("Correo electrónico inválido. Debe contener letras y un '@'.")
 
             cliente = Empresa(rut, nombre, pagina, telefono, correo)
 
@@ -281,13 +361,13 @@ class Sistema:
 
         reposicion = Reposicion(pieza_seleccionada, cantidad_lotes)
         self.reposiciones.append(reposicion)
-
         print(f"\nReposición registrada correctamente.")
         print(f"Pieza: {pieza_seleccionada.descripcion}")
         print(f"Cantidad total repuesta: {reposicion.cantidad_total}")
         print(f"Nuevo stock: {pieza_seleccionada.cantidad_disponible}")
         print(f"Costo total de la reposición: USD {reposicion.costo_total:.2f}")
         print(f"Fecha de reposición: {reposicion.fecha.strftime('%Y-%m-%d %H:%M:%S')}")
+        self.actualizar_pedidos_pendientes()
 
     # ----------- PEDIDOS -----------
     def registrar_pedido(self):
@@ -329,7 +409,6 @@ class Sistema:
 
         nuevo_pedido = Pedido(cliente, maquina)
         self.pedidos.append(nuevo_pedido)
-
         print("\nPedido registrado de forma correcta")
         print(f"ID: {nuevo_pedido.id}")
         print(f"Cliente: {cliente}")
@@ -337,6 +416,27 @@ class Sistema:
         print(f"Estado: {nuevo_pedido.estado}")
         print(f"Precio: USD {nuevo_pedido.precio}")
         print(f"Fecha de recepción: {nuevo_pedido.fecha_recibimiento.strftime('%Y-%m-%d %H:%M:%S')}")
+        self.actualizar_pedidos_pendientes()
+
+    # ----------- ACTUALIZAR PEDIDOS PENDIENTES -----------
+    def actualizar_pedidos_pendientes(self):
+        for pedido in self.pedidos:
+            if "estado" in pedido.__dict__ and pedido.estado == "pendiente":
+                maquina = pedido.maquina
+                puede_entregar = True
+                # Verificar si hay stock suficiente para todos los requerimientos
+                for req in maquina.requerimientos:
+                    pieza = req.pieza
+                    if pieza.cantidad_disponible < req.cantidad:
+                        puede_entregar = False
+                        break
+                if puede_entregar:
+                    # Descontar stock y marcar como entregado
+                    for req in maquina.requerimientos:
+                        req.pieza.cantidad_disponible -= req.cantidad
+                    pedido.estado = "entregado"
+                    from datetime import datetime
+                    pedido.fecha_entrega = datetime.now()
 
     # ----------- LISTADOS -----------
     def listar_piezas(self):
@@ -348,12 +448,11 @@ class Sistema:
         for pieza in self.piezas:
             faltante = 0
             for pedido in self.pedidos:
-                if "estado" in pedido.__dict__ and pedido.estado.lower() == "pendiente":
+                if "estado" in pedido.__dict__ and pedido.estado == "pendiente":
                     if "maquina" in pedido.__dict__:
                         maquina = pedido.maquina
                         if "requerimientos" in maquina.__dict__:
                             for req in maquina.requerimientos:
-                                # req.pieza puede ser un objeto, chequeo por código
                                 if "pieza" in req.__dict__ and "codigo" in req.pieza.__dict__:
                                     if req.pieza.codigo == pieza.codigo:
                                         cantidad_necesaria = req.cantidad
@@ -382,25 +481,14 @@ class Sistema:
         print("\nLista de clientes")
         print(f"{'ID':<5} {'Nombre':<30} {'Tipo':<15} {'Contacto':<20}")
         for cliente in self.clientes:
-            try:
+            nombre = "-"
+            if "nombre_completo" in cliente.__dict__:
                 nombre = cliente.nombre_completo
-            except AttributeError:
-                try:
-                    nombre = cliente.nombre
-                except AttributeError:
-                    nombre = "-"
-            try:
-                tipo = cliente.tipo
-            except AttributeError:
-                tipo = "-"
-            try:
-                telefono = cliente.telefono
-            except AttributeError:
-                telefono = "-"
-            try:
-                id_cliente = cliente.id
-            except AttributeError:
-                id_cliente = "-"
+            elif "nombre" in cliente.__dict__:
+                nombre = cliente.nombre
+            tipo = cliente.__dict__.get("tipo", "-")
+            telefono = cliente.__dict__.get("telefono", "-")
+            id_cliente = cliente.__dict__.get("id", "-")
             print(f"{id_cliente:<5} {nombre:<30} {tipo:<15} {telefono:<20}")
 
     def listar_pedidos(self):
@@ -417,11 +505,11 @@ class Sistema:
         pedidos_filtrados = []
         if opcion == "1":
             for pedido in self.pedidos:
-                if hasattr(pedido, "estado") and pedido.estado.lower() == "pendiente":
+                if "estado" in pedido.__dict__ and pedido.estado == "pendiente":
                     pedidos_filtrados.append(pedido)
         elif opcion == "2":
             for pedido in self.pedidos:
-                if hasattr(pedido, "estado") and pedido.estado.lower() == "entregado":
+                if "estado" in pedido.__dict__ and pedido.estado == "entregado":
                     pedidos_filtrados.append(pedido)
         else:
             pedidos_filtrados = self.pedidos
@@ -433,19 +521,17 @@ class Sistema:
         print("\nListado de pedidos:")
         print(f"{'ID':<5} {'Cliente':<30} {'Máquina':<20} {'Estado':<15} {'Precio':<10} {'Fecha recepción':<20}")
         for pedido in pedidos_filtrados:
-            try:
+            nombre_cliente = "-"
+            if "nombre_completo" in pedido.cliente.__dict__:
                 nombre_cliente = pedido.cliente.nombre_completo
-            except AttributeError:
-                try:
-                    nombre_cliente = pedido.cliente.nombre
-                except AttributeError:
-                    nombre_cliente = "-"
+            elif "nombre" in pedido.cliente.__dict__:
+                nombre_cliente = pedido.cliente.nombre
             print(f"{pedido.id:<5} {nombre_cliente:<30} {pedido.maquina.descripcion:<20} {pedido.estado:<15} {pedido.precio:<10.2f} {pedido.fecha_recibimiento.strftime('%Y-%m-%d %H:%M:%S'):<20}")
 
     def listar_contabilidad(self):
         pedidos_entregados = []
         for p in self.pedidos:
-            if hasattr(p, "estado") and p.estado.lower() == "entregado":
+            if "estado" in p.__dict__ and p.estado == "entregado":
                 pedidos_entregados.append(p)
 
         if not pedidos_entregados:
