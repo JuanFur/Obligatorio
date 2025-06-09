@@ -204,6 +204,7 @@ class Sistema:
                     break
                 except ExceptionClienteYaExiste as e:
                     print(e)
+            while True:
                 correo = input("Ingrese correo electrónico: ")
                 cliente = ClienteParticular(nombre, cedula, telefono, correo)
         elif tipo == "2":
