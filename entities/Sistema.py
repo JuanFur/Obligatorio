@@ -222,115 +222,69 @@ class Sistema:
         print(f"Máquina registrada ({nueva_maquina.codigo}).")        
 
     def registrar_cliente(self):
-        # Selección de tipo de cliente
-        tipo_valido = False
-        while not tipo_valido:
-            tipo = input("Seleccionar tipo cliente:\n1 Particular\n2 Empresa\n>").strip()
-            if tipo in ("1", "2"):
-                tipo_valido = True
+            tipo = input("Seleccionar tipo cliente:\n1 Particular\n2 Empresa\n>")
+            cliente = None
+            if tipo == "1":
+                while True:
+                    nombre = input("Ingrese nombre completo: ")
+                    try:
+                        nombre_valido(nombre)
+                        break
+                    except ExceptionClienteYaExiste as e:
+                        print(e)
+                while True:
+                    cedula = input("Ingrese cédula: ")
+                    try:
+                        cedula_valida(cedula)
+                        break
+                    except ExceptionClienteYaExiste as e:
+                        print(e)
+                while True:
+                    telefono = input("Ingrese teléfono: ")
+                    try:
+                        telefono_valido(telefono)
+                        break
+                    except ExceptionClienteYaExiste as e:
+                        print(e)
+                    correo = input("Ingrese correo electrónico: ")
+                    cliente = ClienteParticular(nombre, cedula, telefono, correo)
+            elif tipo == "2":
+                while True:
+                    rut = input("Ingrese RUT: ")
+                    try:
+                        rut_valido(rut)
+                        break
+                    except ExceptionClienteYaExiste as e:
+                        print(e)
+                while True:
+                    nombre = input("Ingrese nombre de la empresa: ")
+                    try:
+                        nombre_valido(nombre)
+                        break
+                    except ExceptionClienteYaExiste as e:
+                        print(e)
+                pagina = input("Ingrese página web: ")
+                while True:
+                    telefono = input("Ingrese teléfono de contacto: ")
+                    try:
+                        telefono_valido(telefono)
+                        break
+                    except ExceptionClienteYaExiste as e:
+                        print(e)
+                
+                correo = input("Ingrese correo electrónico de contacto: ")
+                cliente = Empresa(rut, nombre, pagina, telefono, correo)
             else:
-                print("Tipo cliente no disponible. Ingrese 1 o 2.")
+                print ("Tipo cliente no disponible")
+                return None
+            
+            if cliente:
+                self.clientes.append(cliente)
+                print("\nCliente registrado:")
+                print(cliente)
+                return cliente
+        
 
-        cliente = None
-
-        if tipo == "1":
-            # Cliente Particular
-            nombre_ok = False
-            while not nombre_ok:
-                nombre = input("Ingrese nombre completo: ").strip()
-                try:
-                    nombre_valido(nombre)
-                    nombre_ok = True
-                except ExceptionClienteYaExiste as e:
-                    print(e)
-
-            cedula_ok = False
-            while not cedula_ok:
-                cedula = input("Ingrese cédula: ").strip()
-                try:
-                    cedula_valida(cedula)
-                    # Verificar duplicado en clientes ya registrados
-                    for c in self.clientes:
-                        if getattr(c, "cedula", None) == cedula:
-                            raise ExceptionClienteYaExiste("La cédula ya está registrada en el sistema.")
-                    cedula_ok = True
-                except ExceptionClienteYaExiste as e:
-                    print(e)
-
-            telefono_ok = False
-            while not telefono_ok:
-                telefono = input("Ingrese teléfono: ").strip()
-                try:
-                    telefono_valido(telefono)
-                    telefono_ok = True
-                except ExceptionClienteYaExiste as e:
-                    print(e)
-
-            correo_ok = False
-            while not correo_ok:
-                correo = input("Ingrese correo electrónico: ").strip()
-                if "@" in correo and "." in correo and " " not in correo:
-                    correo_ok = True
-                else:
-                    print("Correo electrónico inválido.")
-
-            cliente = ClienteParticular(nombre, cedula, telefono, correo)
-
-        elif tipo == "2":
-            # Empresa
-            rut_ok = False
-            while not rut_ok:
-                rut = input("Ingrese RUT: ").strip()
-                try:
-                    rut_valido(rut)
-                    for c in self.clientes:
-                        if getattr(c, "rut", None) == rut:
-                            raise ExceptionClienteYaExiste("El RUT ya está registrado en el sistema.")
-                    rut_ok = True
-                except ExceptionClienteYaExiste as e:
-                    print(e)
-
-            nombre_ok = False
-            while not nombre_ok:
-                nombre = input("Ingrese nombre de la empresa: ").strip()
-                try:
-                    nombre_valido(nombre)
-                    nombre_ok = True
-                except ExceptionClienteYaExiste as e:
-                    print(e)
-
-            pagina_ok = False
-            while not pagina_ok:
-                pagina = input("Ingrese página web: ").strip()
-                if pagina and " " not in pagina:
-                    pagina_ok = True
-                else:
-                    print("Página web inválida.")
-
-            telefono_ok = False
-            while not telefono_ok:
-                telefono = input("Ingrese teléfono de contacto: ").strip()
-                try:
-                    telefono_valido(telefono)
-                    telefono_ok = True
-                except ExceptionClienteYaExiste as e:
-                    print(e)
-
-            correo_ok = False
-            while not correo_ok:
-                correo = input("Ingrese correo electrónico de contacto: ").strip()
-                if "@" in correo and "." in correo and " " not in correo:
-                    correo_ok = True
-                else:
-                    print("Correo electrónico inválido.")
-
-            cliente = Empresa(rut, nombre, pagina, telefono, correo)
-
-        if cliente:
-            self.clientes.append(cliente)
-            print("\nCliente registrado:")
-            print(cliente)
-            return cliente
     
     def registrar_pedido(self):
         if not self.clientes:
